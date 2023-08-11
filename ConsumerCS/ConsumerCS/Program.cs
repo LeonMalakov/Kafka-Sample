@@ -1,17 +1,28 @@
 ﻿using ConsumerCS;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 bool shutdown = false;
 var closing = new AutoResetEvent(false);
 
+Console.WriteLine("Started");
+
+string? kafkaHosts = Environment.GetEnvironmentVariable(Constants.HOSTS_ENV);
+
+if (kafkaHosts == null) {
+    Console.WriteLine($"Environment variable {Constants.HOSTS_ENV} not set");
+    return;
+}
+
+Console.WriteLine($"Kafka hosts: {kafkaHosts}");
 var messageQueue = new MessageQueue();
-var consumerHost = new ConsumerHost(messageQueue);
+var consumerHost = new ConsumerHost(messageQueue, kafkaHosts);
 var messageProcessorHost = new MessageProcessorHost(messageQueue);
 
+await Task.Delay(10_000);
 Start();
 
-Console.WriteLine("Started");
 
 Console.CancelKeyPress += OnCancelKeyPress;
 AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
