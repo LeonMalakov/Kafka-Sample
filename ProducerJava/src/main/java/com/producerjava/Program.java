@@ -24,10 +24,11 @@ public class Program {
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try(KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties)) {
-            for(int i = 0; i < 5; i++){
-                ProducerRecord<String, String> record = new ProducerRecord<String, String>(Constants.TOPIC, "Item " + i);
+            for(int i = 0; i < 100; i++){
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>(Constants.TOPIC, "Item From Java " + i);
                 producer.send(record);
                 System.out.println(record.value());
+                Thread.sleep(5000);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
